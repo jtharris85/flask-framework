@@ -17,7 +17,7 @@ def jprint(obj):
     print(text)
 
 #Define parameters for filtering. Need to make them selectable!
-parameter={'qopts.columns':"ticker,date,open,adj_open,close,adj_close","ticker":"F"}
+parameter={'qopts.columns':"ticker,date,open,adj_open,close,adj_close","ticker":"GOOG"}
 r=requests.get(url,params=parameter)
 
 #Drop the excess framework
@@ -35,7 +35,6 @@ def stockplot():
     import numpy as np
 
     from bokeh.plotting import figure, output_file, show
-    from bokeh.sampledata.stocks import AAPL
 
 # prepare some data
     stocks = df['Close']
@@ -46,7 +45,7 @@ def stockplot():
     avg = np.convolve(stocks, window, 'same')
 
 # output to static HTML file
-    output_file("stocktest.html", title="stock test example")
+    output_file("templates/stocktest.html", title="stock test example")
 
 # create a new plot with a datetime axis type
     p = figure(plot_width=800, plot_height=350, x_axis_type="datetime")
@@ -63,10 +62,7 @@ def stockplot():
     p.yaxis.axis_label = 'Price'
     p.ygrid.band_fill_color = "olive"
     p.ygrid.band_fill_alpha = 0.1
-
-# show the results
     show(p)
-
 stockplot()
 
 @app.route('/')
@@ -79,7 +75,7 @@ def about():
 
 @app.route('/stocks')
 def stocks():
-    return render_template('bokeh_plot.html')
+    return render_template('stocktest.html')
 
 if __name__ == '__main__':
   app.run(port=33507,debug=True)
