@@ -22,7 +22,7 @@ def stockrequest():
         print(text)
 
 #Define parameters for filtering. Need to make them selectable!
-    parameter={'qopts.columns':"ticker,date,open,adj_open,close,adj_close","ticker":app.vars['ticker']}
+    parameter={'qopts.columns':"ticker,date,open,adj_open,close,adj_close","ticker":app.vars['ticker'],"date.gte":app.vars['startdate'],"date.lte":app.vars['enddate']}
     r=requests.get(url,params=parameter)
 
 #Drop the excess framework
@@ -81,7 +81,7 @@ def stockrequest():
         p.yaxis.axis_label = 'Price'
         p.ygrid.band_fill_color = "olive"
         p.ygrid.band_fill_alpha = 0.1
-        show()
+        show(p)
     stockplot()
 
 @app.route('/',methods=['GET','POST'])
@@ -93,11 +93,16 @@ def stockeselector():
 
 @app.route('/stocks',methods=['POST'])
 def stocks():
+    import datetime
     app.vars['ticker']=request.form['ticker']
     app.vars['open']=request.form.get('Open',0)
     app.vars['close']=request.form.get('Close',0)
     app.vars['adjclose']=request.form.get('Adj Close',0)
     app.vars['adjopen']=request.form.get('Adj Open',0)
+    startdate=request.form['daterange'][:10]
+    app.vars['startdate']=datetime.datetime.strptime(startdate,"%m/%d/%Y").strftime("%Y-%m-%d")
+    enddate=request.form['daterange'][-10:]
+    app.vars['enddate']=datetime.datetime.strptime(enddate,"%m/%d/%Y").strftime("%Y-%m-%d")
     stockrequest()
     return render_template('stocktest.html')
 
